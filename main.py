@@ -11,6 +11,8 @@ from methods.analisis_de_componentes_principales import main as method_pca
 from methods.ganancia_de_informacion import main as method_gi
 from methods.maxima_relevancia_minima_redundancia import main as method_mrmr
 from methods.puntuacion_de_informacion_mutua import main as method_pim
+from methods.random_forest import main as method_rf
+from methods.regularizacion_L1 import main as method_lasso
 
 logger = logging.getLogger()
 logger.setLevel(constants.LOGGER_LEVEL)
@@ -26,7 +28,12 @@ def main(name, n_words, file_name, show_values=False):
         elif name == constants.METHOD_MRMR:
             response_main = method_mrmr.main(file_name, n_words, show_values)
         elif name == constants.METHOD_PIM:
-            response_main = method_pim.main(file_name,n_words,show_values)
+            response_main = method_pim.main(file_name, n_words, show_values)
+        elif name == constants.METHOD_RF:
+            response_main = method_rf.main(file_name, n_words, show_values)
+        elif name == constants.METHOD_LASSO:
+            response_main = method_lasso.main(file_name, n_words, show_values)
+
     except Exception as e:
         logger.exception(e)
         response_main['message'] = str(e)
@@ -43,7 +50,7 @@ if __name__ == '__main__':
         print("")
         print(" El formato del documento debera ser:")
         print()
-        print(" col1 Este es un tenxto de prueba")
+        print(" col1 Este es un texto de prueba")
         print(" arch1.txt 0 1 1 0 1 0")
         print(" arch20.txt 1 0 1 0 1 0")
         print()
@@ -53,7 +60,11 @@ if __name__ == '__main__':
         print(" 2) Ganancia de Información")
         print(" 3) Puntuación de Información Mutua")
         print(" 4) Máxima Relevancia Mínima Redundancia")
-        print()
+        print("")
+        print("=================================== Por Modelos  ==============================")
+        print(" 5) Random Forest [stable]")
+        print(" 6) regularización L1 [stable]")
+
         method_value = int(input("Selecciona un algoritmo: "))
         words_value = int(input("Selecciona el numero de palabras: "))
         is_show_values = int(input("Digita 1 para ver los valores de los pesos y 0 para no mostrarlos: "))
@@ -68,6 +79,10 @@ if __name__ == '__main__':
             method_name = constants.METHOD_PIM
         elif method_value == 4:
             method_name = constants.METHOD_MRMR
+        elif method_value == 5:
+            method_name = constants.METHOD_RF
+        elif method_value == 6:
+            method_name = constants.METHOD_LASSO
 
         files = os.listdir(constants.INPUT_DIRECTORY_NAME)
 
@@ -83,8 +98,7 @@ if __name__ == '__main__':
             response['details'].append({
                 'method': method_name,
                 'file_name': response_method['message'] + '.' + constants.OUTPUT_DEFAULT_EXT,
-                'count_selected_words': response_method['data']['count_selected_words'],
-                'all_words_in_file': response_method['data']['all_words_in_file']
+                'count_selected_words': response_method['data']['count_selected_words']
             })
 
         response['message'] = 'successfully'
